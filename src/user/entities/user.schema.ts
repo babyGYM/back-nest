@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
+
+type id = string | Types.ObjectId;
 
 @Schema({ collection: 'user' })
 export class User extends Document {
@@ -14,6 +16,9 @@ export class User extends Document {
 
   @Prop({ required: true })
   age: number;
+
+  @Prop({ type: Types.ObjectId, ref: 'Rol', default: null })
+  Rol: id;
 
   @Prop({ default: Date.now })
   createdAt: Date;
