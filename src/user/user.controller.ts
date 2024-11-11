@@ -4,6 +4,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.schema';
+import { AuthUserDto } from './dto/auth-user.dto';
 
 @ApiTags('users')  // Agrupa los endpoints bajo la categoría "users"
 @Controller('user')
@@ -16,6 +17,14 @@ export class UserController {
   @ApiResponse({ status: 400, description: 'Invalid input' })  // Respuesta de error
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
+  }
+
+  @Post("auth")
+  @ApiOperation({ summary: 'autenticacion de usuario' })  // Descripción del endpoint
+  @ApiResponse({ status: 201, description: 'auth', type: User })  // Respuesta exitosa
+  @ApiResponse({ status: 400, description: 'Invalid input' })  // Respuesta de error
+  auth(@Body() auth: AuthUserDto) {
+    return this.userService.auth(auth);
   }
 
   @Get()

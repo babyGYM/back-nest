@@ -5,8 +5,9 @@ import { User } from './entities/user.schema';  // Importa el esquema User
 import { CreateUserDto } from './dto/create-user.dto';  // DTO para crear un usuario
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Rol } from '../rol/entities/rol.schema';
-import { Type } from 'class-transformer';
-import { Hijo } from '../hijo/entities/hijo.schema';  // DTO para actualizar un usuario
+import { Hijo } from '../hijo/entities/hijo.schema';
+import { AuthUserDto } from './dto/auth-user.dto';  // DTO para actualizar un usuario
+import * as bcrypt from "bcryptjs";
 
 @Injectable()
 export class UserService {
@@ -17,14 +18,35 @@ export class UserService {
   ) {}
 
   // Crear un nuevo usuario
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const newUser = new this.userModel(createUserDto);
+  async create(user: CreateUserDto): Promise<User> {
+    const newUser = new this.userModel(user);
     return newUser.save();  // Guarda el nuevo usuario en la base de datos
+  }
+
+  async auth(Auth: AuthUserDto){
+    const user = await  this.findByEmail(Auth.email);
+
+    if (!user){
+      throw new NotFoundException('Not Found');
+    }
+
+    const isMatch = await bcrypt.compare(Auth.password, user.password);
+    if (!isMatch) {
+      return null;  // Si las contraseñas no coinciden
+    }
+
+    const { password: userPassword, ...result } = user.toObject();  // Excluir la contraseña del resultado
+    return result;
   }
 
   // Obtener todos los usuarios
   async findAll(): Promise<User[]> {
     return this.userModel.find().exec();  // Devuelve todos los usuarios
+  }
+
+
+  async findByEmail(email: string): Promise<User> {
+    return this.userModel.findOne({email}).exec();
   }
 
   // Obtener un usuario por su ID
