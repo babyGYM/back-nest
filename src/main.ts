@@ -12,7 +12,7 @@ async function bootstrap() {
     .setVersion('1.0')  // Versión de la API
     .addTag('users')
     .addServer('http://localhost:3000', 'Development Server')  // Definir servidor para desarrollo
-    .addServer('https://api.example.com', 'Production Server') // Etiqueta para los endpoints de usuarios
+    .addServer('https://back-nest-4jc0.onrender.com', 'Production Server') // Etiqueta para los endpoints de usuarios
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
