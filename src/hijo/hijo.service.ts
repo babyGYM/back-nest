@@ -1,26 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { CreateHijoDto } from './dto/create-hijo.dto';
 import { UpdateHijoDto } from './dto/update-hijo.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Hijo } from './entities/hijo.schema';
+import { Model } from 'mongoose';
+import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class HijoService {
+
+  constructor(@InjectModel(Hijo.name) private hijoModel: Model<Hijo>) {
+  }
+
   create(createHijoDto: CreateHijoDto) {
-    return 'This action adds a new hijo';
+    const newHijo = new this.hijoModel(createHijoDto);
+    return newHijo.save();
   }
 
-  findAll() {
-    return `This action returns all hijo`;
+  async findAll() : Promise<Hijo[]> {
+    return this.hijoModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} hijo`;
+  async findOne(id: string): Promise<Hijo> {
+    return this.hijoModel.findById(id).exec();
   }
 
-  update(id: number, updateHijoDto: UpdateHijoDto) {
-    return `This action updates a #${id} hijo`;
+  async update(id: string, updateHijoDto: UpdateHijoDto): Promise<Hijo> {
+    return this.hijoModel.findByIdAndUpdate(id, updateHijoDto, { new: true }).exec();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} hijo`;
+  async remove(id: string): Promise<Hijo> {
+    return this.hijoModel.findByIdAndDelete(id).exec();
   }
 }

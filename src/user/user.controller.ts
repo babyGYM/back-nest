@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Patch, Delete, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';  // Importa los decoradores de Swagger
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -34,12 +34,28 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch('actualizar/:id')
   @ApiOperation({ summary: 'Update a user by ID' })  // Descripción del endpoint
   @ApiResponse({ status: 200, description: 'User updated successfully', type: User })  // Respuesta exitosa
   @ApiResponse({ status: 404, description: 'User not found' })  // Respuesta de error
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);
+  }
+
+  @Patch('asignar_rol')
+  @ApiOperation({ summary: 'Update a user by ID' })  // Descripción del endpoint
+  @ApiResponse({ status: 200, description: 'asignar un rol al usuario', type: User })  // Respuesta exitosa
+  @ApiResponse({ status: 404, description: 'User not found' })  // Respuesta de error
+  assignRol(@Query('userId') userId: string, @Query('roleId') roleId: string) {
+    return this.userService.assignRole(userId, roleId);
+  }
+
+  @Patch('asignar_hijo')
+  @ApiOperation({ summary: 'Update a user by ID' })  // Descripción del endpoint
+  @ApiResponse({ status: 200, description: 'agregar un hijo al usuario', type: User })  // Respuesta exitosa
+  @ApiResponse({ status: 404, description: 'User not found' })  // Respuesta de error
+  assignHijo(@Query('userId') userId: string, @Query('HijoId') hijoId: string) {
+    return this.userService.assignHijo(userId, hijoId);
   }
 
   @Delete(':id')
